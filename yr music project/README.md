@@ -1,20 +1,13 @@
-🎶 Rathore Music Hub - Jai Shree Ram 🎶
+# YR MUSIC
 
+This directory is the static site root for YR MUSIC. It uses native HTML, CSS, and ES modules with a local normalized catalog.
 
-Description:
-Rathore Music Hub ek simple web page hai jisme users Ram Bhajans ko sun aur download kar sakte hain.
+Run it from the repository root:
 
-Features:
-Play, Pause aur Stop Controls
-Download Button ke saath Progress Animation
-Light Blue Theme aur Animated Heading
-
-File Size Display
-How to Use:
-Rathore music.html file ko browser me open karo.
-Play, Pause, Stop buttons use karo.
-Download button se songs download karo.
-Author:Yashraj Singh Rathore
-Date: 2023-10-01
-License: MIT License
+```powershell
+npm run dev
 ```
+
+Then open http://localhost:8080.
+
+The two bundled MP3 files are the only verified full-length playback sources. Other catalog entries are metadata-only until a licensed provider supplies a verified preview. The app does not scrape, download, bypass DRM, or expose provider credentials.

@@ -1,68 +1,46 @@
 # YR MUSIC
 
-YR MUSIC is a focused, dark music discovery interface built from the original static music page. It combines the two included local MP3 files with catalog search and 30-second previews from the public iTunes Search API.
+YR MUSIC is a framework-free music discovery interface with a normalized local catalog, two bundled MP3 files, search, filters, likes, recent history, playlists, and queue controls.
+
+## Run locally
+
+From the repository root:
+
+```powershell
+npm run dev
+```
+
+Open http://localhost:8080. The static server publishes `yr music project` as the site root. `npm start` is an alias for the same command.
+
+## Playback and provider status
+
+The bundled `Jai Shree Ram.mp3` and `Ram Aayenge to Angana Sajaungi (Female Version).mp3` files are verified local playback sources. Other catalog records are metadata-only and are visibly labeled until a licensed provider supplies a verified preview or playable URL. The app does not scrape, download unauthorized music, bypass DRM, rehost streams, or expose provider credentials.
+
+`yr music project/js/api.js` is a normalized provider boundary. It currently reads `data/songs.json`; no iTunes or SoundCloud integration is active. A future provider must be licensed, server-mediated where credentials are required, and compliant with attribution and playback restrictions.
 
 ## Features
 
 - Responsive desktop and mobile navigation
-- Local MP3 playback with play, pause, seek, volume, mute, previous, next, shuffle, and repeat
-- Catalog search with debounce, loading, empty, and network error states
-- Favorites and recently played state persisted in `localStorage`
-- Keyboard shortcuts: Space for play/pause, M for mute, and arrow keys to seek
-- Accessible controls, fallback artwork, reduced-motion support, and no exposed secrets
+- Hindi, Haryanvi, Punjabi, and Indian editorial catalog sections
+- Local playback with play, pause, seek, volume, mute, previous, next, shuffle, and repeat
+- Search with filters and stale-request protection
+- Likes, recent history, and playlists persisted in `localStorage`
+- Fallback artwork and explicit metadata-only states
 
-## Architecture
-
-The app remains framework-free and uses native ES modules:
-
-```text
-yr music project/
-├── index.html              semantic application shell
-├── css/
-│   ├── style.css           variables, typography, layout, base styles
-│   ├── components.css      navigation, cards, player, controls, states
-│   └── responsive.css      mobile and tablet behavior
-├── js/
-│   ├── app.js              bootstrap, views, event wiring
-│   ├── api.js              iTunes Search API client and normalization
-│   ├── player.js           audio playback, queue, seek, volume, repeat
-│   ├── state.js            centralized application state
-│   ├── storage.js          safe localStorage persistence
-│   ├── search.js           debounced catalog search
-│   └── ui.js               rendering, cards, artwork, and toasts
-├── Jai Shree Ram.mp3      original local audio asset
-└── Ram Aayenge to Angana Sajaungi (Female Version).mp3
-```
-
-## Run Locally
-
-No build step or API key is required. Serve the repository over HTTP so browser audio and fetch behavior are consistent:
+## Validation
 
 ```powershell
-cd "yr music project"
-python -m http.server 8080
+npm run build
 ```
 
-Open http://localhost:8080.
+The build check validates JavaScript syntax, catalog fields, unique IDs, and referenced local audio files.
 
-## API and Limitations
+## Supabase owner CMS
 
-Search uses Apple's public iTunes Search API. Its results provide metadata, artwork, and provider-hosted short previews. YR MUSIC does not claim or implement unrestricted streaming, downloading, scraping, DRM bypass, or authentication. The two bundled MP3s are the only full-length local playback assets in this repository.
+The Supabase integration is opt-in and keeps the local catalog/audio rollback path intact. It includes versioned SQL for songs, playlists, playback telemetry, analytics, audit history, owner authorization, RLS, and private storage buckets. See [SUPABASE_SETUP.md](SUPABASE_SETUP.md) before configuring a real project.
 
-The app is intentionally local-first: favorites, recent history, player volume, and queue behavior are stored in the browser. A backend, user accounts, server-side provider credentials, playlist sync, and production observability would be the next step for a deployed multi-user product.
+```powershell
+npm run catalog:export
+```
 
-## Security
-
-There are no API keys in the frontend. `.env` files, build artifacts, logs, and dependency folders are ignored. If a private provider is added later, put its credentials behind a server-side API or serverless function and rotate any credential that has ever been committed.
-
-## Deployment
-
-This static app can be deployed to Netlify, Vercel, GitHub Pages, or any static host. Publish the `yr music project` directory as the site root. Keep the MP3 files available at the same relative paths.
-
-## Future Improvements
-
-1. Add a server-side provider adapter and authenticated account flow.
-2. Add real playlist creation and playlist editing UI backed by local storage or a database.
-3. Add routeable artist, album, and track detail views.
-4. Add automated browser tests for search and player state.
-5. Add a proper build pipeline with linting, asset optimization, and deployment previews.
+This generates an idempotent seed from `songs.json` without modifying the original catalog or MP3 files. No Supabase project, owner account, upload, RLS policy test, or deployment is claimed until configured and verified with real credentials.

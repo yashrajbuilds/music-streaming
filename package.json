@@ -1,0 +1,12 @@
+{
+  "name": "yr-music",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build-check.mjs",
+    "catalog:export": "node scripts/export-catalog-sql.mjs",
+    "supabase:verify": "node scripts/verify-supabase-foundation.mjs",
+    "dev": "python -m http.server 8080 --directory \"yr music project\"",
+    "start": "python -m http.server 8080 --directory \"yr music project\""
+  }
+}

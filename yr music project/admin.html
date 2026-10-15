@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="YR MUSIC owner administration">
+  <title>YR MUSIC Admin</title>
+  <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./css/catalog.css">
+  <link rel="stylesheet" href="./css/admin.css">
+  <link rel="icon" type="image/png" href="./assets/images/yr-mark.png">
+  <style>
+    .admin-toolbar{grid-template-columns:minmax(180px,1fr) repeat(3,minmax(120px,160px))}.library-summary{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin:8px 0 12px}.media-preview{width:100%;margin-top:-4px}.artwork-preview{width:96px;height:96px;object-fit:cover;border-radius:8px;background:var(--panel-raised)}.form-errors{color:#ff9b9b;font-size:12px;line-height:1.5}.field-error{border-color:#ff9b9b!important}.song-select{cursor:pointer}@media(max-width:800px){.admin-toolbar{grid-template-columns:1fr}.library-summary{align-items:flex-start;flex-direction:column;gap:4px}}
+  </style>
+</head>
+<body class="admin-body">
+  <main class="admin-shell">
+    <section id="loginPanel" class="admin-panel login-panel">
+      <span class="eyebrow">Owner access</span>
+      <h1>YR MUSIC Admin</h1>
+      <p>Manage the catalog and review verified listening data.</p>
+      <form id="loginForm" class="admin-form">
+        <label>Email<input id="loginEmail" type="email" autocomplete="username" required></label>
+        <label>Password<input id="loginPassword" type="password" autocomplete="current-password" required></label>
+        <button class="primary-button" type="submit">Sign in</button>
+      </form>
+      <div id="loginStatus" class="admin-status" role="status"></div>
+    </section>
+
+    <section id="adminPanel" class="hidden">
+      <header class="admin-header">
+        <div><span class="eyebrow">Owner console</span><h1>Catalog control room</h1><p id="adminIdentity"></p></div>
+        <button id="logoutButton" class="text-button">Sign out</button>
+      </header>
+      <div id="adminStatus" class="admin-status" role="status"></div>
+      <section class="metric-grid" id="metricGrid"></section>
+      <div class="admin-grid">
+        <section class="admin-panel">
+          <div class="admin-section-heading"><div><span class="eyebrow">Music library</span><h2>Songs</h2></div><button id="newSongButton" class="primary-button">Add song</button></div>
+          <div class="admin-toolbar"><input id="songSearch" type="search" placeholder="Search title, artist, album, or language" aria-label="Search songs"><select id="languageFilter" aria-label="Filter language"><option value="">All languages</option></select><select id="genreFilter" aria-label="Filter genre"><option value="">All genres</option></select><select id="statusFilter" aria-label="Filter publication status"><option value="">All statuses</option><option value="published">Published</option><option value="draft">Draft</option><option value="archived">Archived</option></select></div>
+          <div class="library-summary"><span id="songCount">0 songs</span><span id="libraryPageStatus"></span></div>
+          <div id="songList" class="admin-list"></div>
+          <div id="songPagination" class="admin-pagination"></div>
+        </section>
+        <section class="admin-panel">
+          <div class="admin-section-heading"><div><span class="eyebrow">Editor</span><h2 id="songFormTitle">Add song</h2></div></div>
+          <form id="songForm" class="admin-form">
+            <input id="songId" type="hidden">
+            <label>Legacy song ID<input id="songLegacyId" maxlength="120" placeholder="e.g. hindi-my-song"><span class="field-hint">Stable ID used by the local catalog and imports.</span></label>
+            <label>Title<input id="songTitle" required maxlength="200"></label>
+            <label>Artist<input id="songArtist" required maxlength="200"></label>
+            <label>Artist ID<input id="songArtistId" maxlength="120" placeholder="generated if empty"></label>
+            <label>Album<input id="songAlbum" maxlength="200"></label>
+            <label>Album ID<input id="songAlbumId" maxlength="120" placeholder="generated if empty"></label>
+            <div class="admin-form-row"><label>Language<input id="songLanguage" required maxlength="80"></label><label>Genre<input id="songGenre" required maxlength="100"></label></div>
+            <div class="admin-form-row"><label>Duration seconds<input id="songDuration" type="number" min="1" max="86400"></label><label>Status<select id="songStatus"><option value="draft">Draft</option><option value="published">Published</option><option value="archived">Archived</option></select></label></div>
+            <label>Audio file<input id="songAudio" type="file" accept="audio/mpeg,audio/mp4,audio/ogg,audio/wav"><span class="field-hint">Optional for metadata-only drafts. Existing local MP3s remain in the public app.</span></label>
+            <audio id="audioPreview" class="media-preview" controls preload="metadata" hidden></audio>
+            <label>Artwork<input id="songArtwork" type="file" accept="image/jpeg,image/png,image/webp"></label>
+            <img id="artworkPreview" class="artwork-preview" alt="Artwork preview" hidden>
+            <div id="songFormErrors" class="form-errors" role="alert"></div>
+            <div class="form-actions"><button class="primary-button" type="submit">Save song</button><button id="cancelSongButton" class="text-button" type="button">Clear</button></div>
+          </form>
+        </section>
+      </div>
+      <section class="admin-panel admin-section"><div class="admin-section-heading"><div><span class="eyebrow">Listening signals</span><h2>Analytics</h2></div><div><button id="refreshAnalytics" class="text-button">Refresh</button><button id="exportAnalytics" class="text-button">Export CSV</button></div></div><p class="field-hint">Metrics are estimates from untrusted browser events and appear only after real traffic arrives.</p><div id="analyticsTable" class="admin-list"></div></section>
+      <section class="admin-panel admin-section"><div class="admin-section-heading"><div><span class="eyebrow">Accountability</span><h2>Audit history</h2></div></div><div id="auditList" class="admin-list"></div></section>
+    </section>
+  </main>
+  <script>globalThis.YR_MUSIC_CONFIG = globalThis.YR_MUSIC_CONFIG || { supabase: { url: '', anonKey: '' } };</script>
+  <script type="module" src="./js/admin.js"></script>
+</body>
+</html>
