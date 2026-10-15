@@ -1,196 +1,56 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>🎶 Jai Shree Ram Music 🎵</title>
-  <style>
-    .content {
-      color: white;
-      text-align: center;
-      padding-top: 20%;
-      text-shadow: 1px 1px 5px black;
-    }
-    .logo-container {
-      position: absolute;
-      top: 10px;
-      right: 15px;
-    }
-    .logo {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      box-shadow: 0 0 8px rgba(0,0,0,0.2);
-    }
-    body {
-      background-color: #add8e6;
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin: 0;
-      padding: 0;
-    }
-    h1 {
-      font-size: 30px;
-      font-weight: bold;
-      color: #ff4500;
-      text-shadow: 0px 0px 10px rgba(255, 69, 0, 0.8);
-      animation: bounceIn 1.5s ease-in-out;
-    }
-    @keyframes bounceIn {
-      0% { transform: scale(0.5); opacity: 0; }
-      60% { transform: scale(1.2); opacity: 1; }
-      100% { transform: scale(1); }
-    }
-    .audio-container {
-      margin: 20px auto;
-      padding: 15px;
-      max-width: 400px;
-      background: #C0C0C0;
-      border-radius: 10px;
-      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-      text-align: center;
-    }
-    .controls button {
-      padding: 10px 15px;
-      margin: 5px;
-      border: none;
-      border-radius: 5px;
-      font-size: 14px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    .play { background: #28a745; color: white; }
-    .pause { background: #ffc107; color: black; }
-    .stop { background: #dc3545; color: white; }
-    .play:hover, .pause:hover, .stop:hover { opacity: 0.8; }
-    .download {
-      background: #007bff;
-      color: white;
-      text-decoration: none;
-      display: inline-block;
-      padding: 10px 15px;
-      margin: 10px;
-      border-radius: 5px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: 0.3s;
-      animation: jump 1.5s infinite;
-      position: relative;
-    }
-    @keyframes jump {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
-    .progress-container {
-      width: 100%;
-      background: #e0e0e0;
-      border-radius: 5px;
-      margin: 10px auto;
-      max-width: 350px;
-    }
-    .progress-bar {
-      width: 0%;
-      height: 10px;
-      background: #007bff;
-      border-radius: 5px;
-      transition: width 0.4s ease;
-    }
-    .file-size {
-      font-size: 14px;
-      color: #333;
-      margin-top: 5px;
-    }
-    /* Footer Styling */
-    footer {
-      background-color: #ff4500;
-      color: white;
-      text-align: center;
-      padding: 15px 10px;
-      font-weight: bold;
-      box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.2);
-      margin-top: 30px;
-    }
-    .footer-container p {
-      margin: 0;
-      font-size: 16px;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="YR MUSIC - discover your sound.">
+  <meta name="theme-color" content="#0b0c10">
+  <title>YR MUSIC - Discover your sound</title>
+  <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./css/components.css">
+  <link rel="stylesheet" href="./css/responsive.css">
 </head>
 <body>
-  <div class="logo-container">
-    <img src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExMzJ0MnpobWhuaHZnZmthMGt1OWNjdXI4bTNvcjZqbWY2aG1sOWE5ZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/6zQas6FKEnaGYlKY3g/giphy.gif" alt="Logo" class="logo">
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Primary navigation">
+      <div class="brand"><span class="brand-mark">YR</span><span>YR MUSIC</span></div>
+      <div class="nav-label">Main</div>
+      <button class="nav-button active" data-view="home"><span>⌂</span>Home</button>
+      <button class="nav-button" data-view="search"><span>⌕</span>Search</button>
+      <button class="nav-button" data-view="discover"><span>✦</span>Discover</button>
+      <div class="nav-label">Your library</div>
+      <button class="nav-button" data-view="recent"><span>◷</span>Recently played</button>
+      <button class="nav-button" data-view="liked"><span>♡</span>Liked songs</button>
+      <button class="nav-button" data-view="playlists"><span>▦</span>Playlists</button>
+      <p class="provider-note">Preview-first listening powered by the iTunes Search API.</p>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <span class="eyebrow" id="greeting">Good evening</span>
+        <label class="search-box" aria-label="Search music"><span>⌕</span><input id="searchInput" type="search" placeholder="Search songs, artists, albums" autocomplete="off"></label>
+      </header>
+
+      <section id="homeView" class="view">
+        <section class="hero"><div class="hero-copy"><span class="eyebrow">Your daily soundtrack</span><h1>Find a feeling. Press play.</h1><p>Explore music, keep your favorites close, and make the next song yours.</p><button class="primary-button" id="exploreButton">Explore music <span>→</span></button></div></section>
+        <section class="content-section"><div class="section-heading"><h2>Local favorites</h2><button class="text-button" data-view="liked">View library →</button></div><div id="localTracks" class="track-grid"></div></section>
+        <section class="content-section"><div class="section-heading"><h2>Quick picks</h2><span class="eyebrow">From your library</span></div><div id="quickPicks" class="quick-list"></div></section>
+        <section class="content-section"><div class="section-heading"><h2>Discover something new</h2><button class="text-button" data-view="search">Search the catalog →</button></div><div id="discoverTracks" class="track-grid"></div></section>
+      </section>
+
+      <section id="searchView" class="view hidden"><div class="section-heading"><div><span class="eyebrow">Catalog search</span><h2>Search results</h2></div><span class="eyebrow" id="searchStatus"></span></div><div id="searchResults" class="search-results"><div class="empty-state"><strong>Search the catalog</strong><span>Try an artist, album, or track title.</span></div></div></section>
+    </main>
   </div>
-  <h1>✍🏻 🎶 NOTICE 🎶 ✍🏻</h1>
-  <p style="font-size: 18px; font-weight: bold; color: #a91111d4; text-shadow: 0px 0px 10px rgba(255, 69, 0, 0.8);">
-    🚩 Jai Shree Ram! ✅ <br>🙏 Welcome to your Rathore music hub! ✅<br>🎵 Enjoy soulful bhajans, feel the devotion, and download your favorite tracks easily! 📥🔥✅
-  </p>
-  <p class="notice">
-    🚩 <strong>JAI SHREE RAM</strong> 🚩  <br>🎵 <strong>Song & Singer:</strong> Hansraj Raghuvanshi  <br> 🎶 <strong>Female Version:</strong> Urvashi Kiran Sharma  
-  </p>
-  <!-- Song 1 -->
-  <div class="audio-container">
-    <h3>🎵 Jai Shree Ram</h3>
-    <audio id="audio1">
-      <source src="Jai Shree Ram.mp3" type="audio/mp4">
-    </audio>
-    <div class="controls">
-      <button class="play" onclick="playAudio('audio1')">▶ Play</button>
-      <button class="pause" onclick="pauseAudio('audio1')">⏸ Pause</button>
-      <button class="stop" onclick="stopAudio('audio1')">⏹ Stop</button>
-    </div>
-    <div class="file-size">📂 File Size: 3.5MB</div>
-    <div class="progress-container"><div id="progress1" class="progress-bar"></div></div>
-    <a href="Jai-Shree-Ram(PaglaSongs.Com.Se).mp4" download class="download" onclick="startDownload('progress1')">⬇ 📥 Download</a>
-  </div>
-  <!-- Song 2 -->
-  <div class="audio-container">
-    <h3>🎶 Ram Aayenge to Angana Sajaungi</h3>
-    <audio id="audio2">
-      <source src="Ram Aayenge to Angana Sajaungi (Female Version).mp3" type="audio/mpeg">
-    </audio>
-    <div class="controls">
-      <button class="play" onclick="playAudio('audio2')">▶ Play</button>
-      <button class="pause" onclick="pauseAudio('audio2')">⏸ Pause</button>
-      <button class="stop" onclick="stopAudio('audio2')">⏹ Stop</button>
-    </div>
-    <div class="file-size">📂 File Size: 4.8MB</div>
-    <div class="progress-container"><div id="progress2" class="progress-bar"></div></div>
-    <a href="Ram Aayenge to Angana Sajaungi (Female Version).mp3" download class="download" onclick="startDownload('progress2')">⬇ 📥 Download</a>
-  </div>
-  <!-- Footer -->
-  <footer>
-    <div class="footer-container">
-      <p>🚩 जय श्री राम 🚩 | Created with ❤️ by <strong>Yashraj Singh Rathore</strong> | © 2025 All Rights Reserved</p>
-    </div>
-  </footer>
-  <!-- Scripts -->
-  <script>
-    function playAudio(id) {
-      let audio = document.getElementById(id);
-      audio.play();
-    }
-    function pauseAudio(id) {
-      document.getElementById(id).pause();
-    }
-    function stopAudio(id) {
-      let audio = document.getElementById(id);
-      audio.pause();
-      audio.currentTime = 0;
-    }
-    function startDownload(progressBarId) {
-      alert("📥 Download Started!");
-      let progressBar = document.getElementById(progressBarId);
-      progressBar.style.width = "0%";
-      let progress = 0;
-      let interval = setInterval(() => {
-        progress += 10;
-        progressBar.style.width = progress + "%";
-        if (progress >= 100) {
-          clearInterval(interval);
-          alert("✅ Download Complete!");
-        }
-      }, 300);
-    }
-  </script>
+
+  <nav class="mobile-nav" aria-label="Mobile navigation"><button class="active" data-view="home"><span>⌂</span>Home</button><button data-view="search"><span>⌕</span>Search</button><button data-view="liked"><span>♡</span>Liked</button><button data-view="playlists"><span>▦</span>Library</button></nav>
+
+  <section class="player-bar" aria-label="Music player">
+    <div class="now-playing"><div id="nowArtwork" class="artwork">YR</div><div class="now-copy"><strong id="nowTitle">Choose a track</strong><span id="nowArtist">Your player is ready</span></div><button class="icon-button" id="likeButton" aria-label="Like current track">♡</button></div>
+    <div class="player-controls"><div class="control-row"><button class="icon-button minor-control" id="shuffleButton" aria-label="Toggle shuffle">⤨</button><button class="icon-button minor-control" id="previousButton" aria-label="Previous track">◀</button><button class="play-button" id="playButton" aria-label="Play">▶</button><button class="icon-button minor-control" id="nextButton" aria-label="Next track">▶</button><button class="icon-button minor-control" id="repeatButton" aria-label="Toggle repeat">↻</button></div><div class="progress-row"><span id="currentTime">0:00</span><input id="seekInput" type="range" min="0" max="100" value="0" aria-label="Seek track"><span id="duration">0:00</span></div></div>
+    <div class="player-volume"><button class="icon-button" id="muteButton" aria-label="Mute">◖</button><input id="volumeInput" type="range" min="0" max="1" step=".01" value=".8" aria-label="Volume"></div>
+  </section>
+  <div id="toast" class="toast" role="status"></div>
+  <audio id="audioElement" preload="metadata"></audio>
+  <script type="module" src="./js/app.js"></script>
 </body>
 </html>
