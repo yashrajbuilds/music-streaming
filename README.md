@@ -22,18 +22,38 @@ The bundled `Jai Shree Ram.mp3` and `Ram Aayenge to Angana Sajaungi (Female Vers
 
 - Responsive desktop and mobile navigation
 - Hindi, Haryanvi, Punjabi, and Indian editorial catalog sections
-- Local playback with play, pause, seek, volume, mute, previous, next, shuffle, and repeat
+- Local playback with play, pause, seek, volume (persisted), mute, previous, next, shuffle, and repeat
+- Queue navigation that skips metadata-only tracks instead of silently stopping playback
+- Playlist playback, duplicate-safe track picking, and a queue built from the playlist
 - Search with filters and stale-request protection
 - Likes, recent history, and playlists persisted in `localStorage`
 - Fallback artwork and explicit metadata-only states
 
-## Validation
+## Keyboard shortcuts
+
+| Key | Action |
+| --- | --- |
+| `Space` | Play / pause the current track |
+| `M` | Mute / unmute |
+| `←` / `→` | Seek 5 seconds backwards / forwards |
+
+Shortcuts are ignored while typing in a field or while a control has focus.
+
+## Validation and tests
 
 ```powershell
 npm run build
+npm test
+npm run verify
 ```
 
-The build check validates JavaScript syntax, catalog fields, unique IDs, and referenced local audio files.
+- `npm run build` checks JavaScript syntax, local module imports, catalog fields, slug-safe unique IDs, relative audio paths, referenced HTML assets, and the Supabase migration markers.
+- `npm test` runs the zero-dependency `node:test` suite in `tests/`.
+- `npm run verify` runs the build check, the test suite, and the Supabase foundation verification together.
+
+The test runner uses the built-in `node:test` module, so Node.js 20 or newer is recommended and no packages need to be installed.
+
+The tests cover catalog normalization and HTTP failure recovery, search debouncing and filters, storage/history persistence, XSS-safe rendering, playlist rules, admin form validation, and player queue behaviour (skipping unplayable tracks, repeat modes, shuffle, and volume restore). `tests/helpers/fake-dom.js` provides the small DOM/audio stubs, so no extra dependencies are required.
 
 ## Supabase owner CMS
 

@@ -1,40 +1,58 @@
 import { searchTracks } from './api.js';
-import { state } from './state.js';
+import { matchesFilter } from './utils.js';
 import { renderResults } from './ui.js';
 
-const matchesFilter = (track, filter) => filter === 'All' || (filter === 'Trending' ? track.catalogRank < 10 : track.language === filter);
-
-export const createSearch = ({ input, results, status, openSearch, catalog = [] }) => {
+export const createSearch = ({ input, results, status, openSearch, catalog = [], delay = 350, search = searchTracks }) => {
   let timer;
   let filter = 'All';
   let requestId = 0;
   let sourceCatalog = catalog;
+  let lastQuery = '';
 
-  const renderFiltered = () => renderResults(sourceCatalog.filter(track => matchesFilter(track, filter)), results);
-  const setCatalog = nextCatalog => { sourceCatalog = nextCatalog; if (!input.value.trim()) renderFiltered(); };
-  const setFilter = nextFilter => { filter = nextFilter; status.textContent = filter === 'All' ? `${sourceCatalog.length} catalog tracks` : filter; if (!input.value.trim()) renderFiltered(); };
+  const filtered = tracks => tracks.filter(track => matchesFilter(track, filter));
+  const filterLabel = () => filter === 'All' ? 'catalog tracks' : `${filter} tracks`;
+  const renderFiltered = () => {
+    const tracks = filtered(sourceCatalog);
+    status.textContent = `${tracks.length} ${filterLabel()}`;
+    renderResults(tracks, results);
+  };
 
-  input.addEventListener('input', event => {
+  const executeSearch = async (query, currentRequest) => {
+    try {
+      const tracks = filtered(await search(query));
+      if (currentRequest !== requestId) return;
+      status.textContent = `${tracks.length} ${tracks.length === 1 ? 'result' : 'results'}`;
+      renderResults(tracks, results);
+    } catch {
+      if (currentRequest !== requestId) return;
+      status.textContent = 'Search unavailable';
+      results.innerHTML = '<div class="empty-state"><strong>Music catalog unavailable</strong><span>Check the local server and try again.</span></div>';
+    }
+  };
+
+  const scheduleSearch = (query, wait = delay) => {
     clearTimeout(timer);
     const currentRequest = ++requestId;
-    openSearch();
-    const query = event.target.value.trim();
-    if (!query) { status.textContent = ''; renderFiltered(); return; }
+    if (!query) { renderFiltered(); return; }
     status.textContent = 'Searching...';
     results.innerHTML = '<div class="empty-state"><span>Searching the catalog...</span></div>';
-    timer = setTimeout(async () => {
-      try {
-        const tracks = (await searchTracks(query)).filter(track => matchesFilter(track, filter));
-        if (currentRequest !== requestId) return;
-        state.tracks = [...state.tracks.filter(track => track.source === 'local'), ...tracks.filter(track => track.source !== 'local')];
-        status.textContent = `${tracks.length} results`;
-        renderResults(tracks, results);
-      } catch {
-        if (currentRequest !== requestId) return;
-        status.textContent = 'Search unavailable';
-        results.innerHTML = '<div class="empty-state"><strong>Music catalog unavailable</strong><span>Check the local server and try again.</span></div>';
-      }
-    }, 350);
+    timer = setTimeout(() => executeSearch(query, currentRequest), wait);
+  };
+
+  const setCatalog = nextCatalog => {
+    sourceCatalog = nextCatalog;
+    if (lastQuery) scheduleSearch(lastQuery, 0);
+    else renderFiltered();
+  };
+  const setFilter = nextFilter => {
+    filter = nextFilter;
+    scheduleSearch(input.value.trim());
+  };
+
+  input.addEventListener('input', event => {
+    openSearch();
+    lastQuery = event.target.value.trim();
+    scheduleSearch(lastQuery);
   });
 
   return { setFilter, setCatalog, renderFiltered };

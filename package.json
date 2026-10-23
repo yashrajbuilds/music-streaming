@@ -6,6 +6,8 @@
     "build": "node scripts/build-check.mjs",
     "catalog:export": "node scripts/export-catalog-sql.mjs",
     "supabase:verify": "node scripts/verify-supabase-foundation.mjs",
+    "test": "node --test \"tests/**/*.test.js\"",
+    "verify": "npm run build && npm test && npm run supabase:verify",
     "dev": "python -m http.server 8080 --directory \"yr music project\"",
     "start": "python -m http.server 8080 --directory \"yr music project\""
   }
