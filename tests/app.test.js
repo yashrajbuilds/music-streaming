@@ -1,46 +1,17 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { FakeAudio, FakeElement, installBrowserGlobals } from './helpers/fake-dom.js';
-
-installBrowserGlobals();
+import { setupAppHarness } from './helpers/app-harness.js';
 
 const records = [
   { id: 'local-a', title: 'Local A', artist: { id: 'artist-a', name: 'Artist A' }, album: { id: 'album', name: 'Album' }, language: 'Hindi', genre: 'Devotional', popularity: 0, catalogRank: 1, audioUrl: './a.mp3', source: 'local' },
   { id: 'local-b', title: 'Local B', artist: { id: 'artist-b', name: 'Artist B' }, album: { id: 'album', name: 'Album' }, language: 'Punjabi', genre: 'Punjabi Pop', popularity: 0, catalogRank: 2, audioUrl: './b.mp3', source: 'local' },
   { id: 'meta-c', title: 'Meta C', artist: { id: 'artist-c', name: 'Artist C' }, album: { id: 'album', name: 'Album' }, language: 'Haryanvi', genre: 'Haryanvi Pop', popularity: 0, catalogRank: 20, audioUrl: null, source: 'catalog' }
 ];
-globalThis.fetch = async () => ({ ok: true, json: async () => records });
 
-const elements = new Map();
-const element = id => {
-  if (!elements.has(id)) elements.set(id, new FakeElement());
-  return elements.get(id);
-};
-elements.set('audioElement', new FakeAudio());
-
-const listeners = {};
-const viewButtons = [{ dataset: { view: 'home' }, classList: new FakeElement().classList }];
-globalThis.document = {
-  getElementById: element,
-  querySelectorAll: selector => selector === '[data-view]' ? viewButtons : [],
-  querySelector: () => null,
-  addEventListener: (type, handler) => { (listeners[type] ||= []).push(handler); },
-  dispatchEvent: () => true
-};
-globalThis.CSS = { escape: value => String(value) };
-globalThis.window.prompt = () => 'Renamed';
-globalThis.window.confirm = () => true;
-globalThis.window.scrollTo = () => {};
-
-const wait = (ms = 30) => new Promise(resolve => setTimeout(resolve, ms));
-const click = matches => {
-  const target = { closest: selector => matches[selector] || null };
-  for (const handler of listeners.click || []) handler({ target, preventDefault() {} });
-};
-
+const { element, click } = setupAppHarness({ records });
 await import('../yr music project/js/app.js');
 const { state } = await import('../yr music project/js/state.js');
-await wait();
+await new Promise(resolve => setTimeout(resolve, 30));
 
 test('booting renders the greeting, catalog sections, and playlist library', () => {
   assert.match(element('greeting').textContent, /^Good (morning|afternoon|evening|night)$/);

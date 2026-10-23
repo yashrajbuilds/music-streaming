@@ -23,16 +23,24 @@ const openView = view => {
     elements.searchView.classList.toggle('hidden', !viewCopy[view]);
     elements.discoverView.classList.toggle('hidden', view !== 'discover');
     elements.playlistsView.classList.toggle('hidden', view !== 'playlists');
-    document.querySelectorAll('[data-view]').forEach(button => button.classList.toggle('active', button.dataset.view === view));
+    document.querySelectorAll('[data-view]').forEach(button => {
+        const active = button.dataset.view === view;
+        button.classList.toggle('active', active);
+        if (active) button.setAttribute('aria-current', 'page');
+        else button.removeAttribute('aria-current');
+    });
 
     const [eyebrow, title] = viewCopy[view] || ['Catalog search', 'Search results'];
     elements.searchEyebrow.textContent = eyebrow;
     elements.searchTitle.textContent = title;
     elements.filterRow.classList.toggle('hidden', view !== 'search');
 
-    if (view === 'liked') renderLiked(state.liked, elements.searchResults);
-    if (view === 'recent') renderLiked(state.recent, elements.searchResults);
-    if (view === 'search' && elements.searchInput.value.trim()) elements.searchInput.dispatchEvent(new Event('input'));
+    if (view === 'liked') { renderLiked(state.liked, elements.searchResults); elements.searchStatus.textContent = `${state.liked.length} liked`; }
+    if (view === 'recent') { renderLiked(state.recent, elements.searchResults); elements.searchStatus.textContent = `${state.recent.length} recent`; }
+    if (view === 'search') {
+        if (elements.searchInput.value.trim()) elements.searchInput.dispatchEvent(new Event('input'));
+        else search.renderFiltered();
+    }
     if (view === 'discover') renderResults(sections.catalog, elements.discoverTracks);
     if (view === 'playlists') refreshPlaylists();
 };
@@ -58,6 +66,7 @@ const startTrack = track => {
     playQueue([track, ...sections.catalog.filter(item => item.id !== track.id)]);
 };
 const playlistTracks = playlist => playlist.trackIds.map(findTrack).filter(Boolean);
+const playlistId = () => `playlist-${globalThis.crypto?.randomUUID?.() || Date.now()}`;
 
 const search = createSearch({ input: elements.searchInput, results: elements.searchResults, status: elements.searchStatus, openSearch: () => openView('search') });
 
@@ -144,7 +153,7 @@ elements.playlistForm.addEventListener('submit', event => {
     const name = elements.playlistName.value.trim();
     if (!name) return showToast('Give your playlist a name first.');
     if (state.playlists.some(playlist => playlist.name.toLowerCase() === name.toLowerCase())) return showToast('A playlist with that name already exists.');
-    state.playlists.push({ id: `playlist-${Date.now()}`, name, trackIds: [] });
+    state.playlists.push({ id: playlistId(), name, trackIds: [] });
     savePlaylists();
     elements.playlistName.value = '';
     refreshPlaylists();
@@ -159,6 +168,9 @@ const initialize = async () => {
     try {
         sections.catalog = uniqueById(await getCatalogTracks());
         state.tracks = [...sections.catalog];
+        const freshTrack = track => sections.catalog.find(item => item.id === track.id) || track;
+        state.liked = state.liked.map(freshTrack);
+        state.recent = state.recent.map(freshTrack);
         search.setCatalog(sections.catalog);
         [sections.trending, sections.hindi, sections.haryanvi, sections.punjabi] = await Promise.all([getTrendingTracks(), getHindiTracks(), getHaryanviTracks(), getPunjabiTracks()]);
         refreshHome();

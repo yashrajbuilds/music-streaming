@@ -63,3 +63,14 @@ test('setRecent and savePlaylists keep persisted state in sync', () => {
   savePlaylists();
   assert.deepEqual(storage.playlists, [{ id: 'playlist-1', name: 'Commute', trackIds: ['a'] }]);
 });
+
+test('malformed playlists are normalized when the state module boots', async () => {
+  localStorage.setItem('yr-playlists', JSON.stringify([
+    { id: 'p1', name: '  Keep  ', trackIds: ['a', 5, null] },
+    { id: '', name: 'No id', trackIds: [] },
+    { id: 'p2', name: '   ' },
+    null
+  ]));
+  const fresh = await import('../yr music project/js/state.js?playlist-normalize');
+  assert.deepEqual(fresh.state.playlists, [{ id: 'p1', name: 'Keep', trackIds: ['a'] }]);
+});
